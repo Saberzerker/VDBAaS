@@ -11,7 +11,7 @@ Tracks ALL system events for performance analysis and visualization:
 
 Thread-safe, production-ready implementation.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-17
 """
 

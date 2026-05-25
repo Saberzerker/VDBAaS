@@ -28,7 +28,7 @@ Failure modes:
   - Task switch: current anchor is wrong for 1-2 queries, self-corrects
     as new anchor forms and transitions accumulate
 
-Author: Saberzerker (Phase 3: Markov transitions)
+Author: Anonymous (Phase 3: Markov transitions)
 Date: 2026-04-19
 """
 

@@ -5,7 +5,7 @@ Configuration for Hybrid VDB System
 All tunable parameters in one place.
 Defines the three-tier architecture parameters and learning thresholds.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-17
 """
 

@@ -23,8 +23,8 @@ Usage:
 import subprocess, os, sys, time, shutil, json
 from pathlib import Path
 
-PROJECT = Path(r"C:\Users\makar\new_vdb_testing")
-PYTHON = r"C:\Users\makar\miniconda3\python.exe"
+PROJECT = Path(r"./vdb-benchmark")
+PYTHON = r"python"
 
 CLUSTERS = [
     {"name": "c1", "url": "YOUR_QDRANT_CLUSTER_URL",

@@ -26,7 +26,7 @@ Retired components (kept for reference, not in local path):
   - rerank(), rerank_with_threshold(): cross-encoder functions. Kept for
     potential cloud-side re-ranking but NOT called in the local path.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2026-04-23 (Phase 5: BM25+cosine gate replacement)
 """
 

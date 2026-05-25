@@ -2,7 +2,7 @@
 """
 Time utility functions for the hybrid VDB system.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-16
 """
 

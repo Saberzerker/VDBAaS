@@ -16,7 +16,7 @@ Generates comprehensive plots:
 10. MRR@10 over time (Phase 5)
 11. Local hit rate over time (Phase 5)
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2026-04-23 (Phase 5: added convergence plots)
 """
 

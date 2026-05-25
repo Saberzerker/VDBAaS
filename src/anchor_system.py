@@ -31,7 +31,7 @@ Based on: Cognitive memory models — "gists" as precomputed molds
   (Collins & Loftus 1975, Cowan 1999).
   Query-count decay: session-proportional, not clock-proportional.
 
-Author: Saberzerker (v3: centroid+radius anchors)
+Author: Anonymous (v3: centroid+radius anchors)
 Date: 2026-04-19
 """
 

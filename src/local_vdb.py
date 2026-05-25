@@ -8,7 +8,7 @@ Wrapper around StorageEngine that provides:
 - Weight management
 - Statistics tracking
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-17 00:10 UTC
 """
 

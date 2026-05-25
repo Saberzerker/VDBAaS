@@ -4,7 +4,7 @@ Embedding model wrapper for the hybrid VDB system.
 
 Wraps sentence-transformers for consistent embedding generation.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-16
 """
 

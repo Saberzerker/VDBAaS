@@ -4,7 +4,7 @@ Logging configuration for Hybrid VDB system.
 
 Provides consistent logging across all modules.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-16
 """
 

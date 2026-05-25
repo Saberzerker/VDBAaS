@@ -12,7 +12,7 @@ Usage:
     python benchmark/benchmark.py --mode full
     python benchmark/benchmark.py --mode quick --queries-file queries/custom_queries.txt
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-30
 """
 

@@ -11,7 +11,7 @@ Key Features:
 - Cluster reinforcement (access tracking)
 - TTL-based eviction (remove stale clusters)
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-17
 """
 

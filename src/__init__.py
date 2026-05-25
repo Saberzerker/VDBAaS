@@ -2,7 +2,7 @@
 """
 Hybrid VDB System - Anchor-Based Predictive Trajectory Learning.
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-16
 """
 

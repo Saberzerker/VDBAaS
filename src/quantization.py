@@ -15,7 +15,7 @@ Trade-off:
 - Accuracy: >98% maintained
 - Speed: Slightly slower (quantize/dequantize overhead)
 
-Author: Saberzerker
+Author: Anonymous
 Date: 2025-11-30
 """
 

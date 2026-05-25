@@ -1,0 +1,15 @@
+# Anonymous submission - VDBAaS
+*.pyc
+__pycache__/
+.venv/
+*.egg-info/
+.ruff_cache/
+data/
+models/
+logs/
+*.log
+.env
+
+# Large files - download separately
+benchmark/workloads/beir/trec-covid/corpus.jsonl
+benchmark/workloads/qrecc/embeddings_intfloat_e5-base-v2.npy

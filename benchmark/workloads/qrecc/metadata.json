@@ -1,0 +1,7 @@
+{
+  "dataset": "qrecc",
+  "corpus_count": 18067,
+  "description": "QReCC conversational QA - ground truth passages as documents",
+  "embedding_model": "intfloat/e5-base-v2",
+  "note": "Documents are Truth_answer text from QReCC training set, used as passage proxies"
+}

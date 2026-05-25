@@ -1,0 +1,7 @@
+{
+  "dataset_id": "BeIR/nfcorpus",
+  "qrels_id": "BeIR/nfcorpus-qrels",
+  "qrels_split": "test",
+  "corpus_count": 3633,
+  "query_count": 323
+}

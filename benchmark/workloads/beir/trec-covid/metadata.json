@@ -1,0 +1,7 @@
+{
+  "dataset_id": "BeIR/trec-covid",
+  "qrels_id": "BeIR/trec-covid-qrels",
+  "qrels_split": "test",
+  "corpus_count": 171332,
+  "query_count": 50
+}

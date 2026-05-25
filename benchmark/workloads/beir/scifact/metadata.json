@@ -1,0 +1,7 @@
+{
+  "dataset_id": "BeIR/scifact",
+  "qrels_id": "BeIR/scifact-qrels",
+  "qrels_split": "test",
+  "corpus_count": 5183,
+  "query_count": 300
+}

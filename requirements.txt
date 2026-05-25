@@ -1,0 +1,11 @@
+# requirements.txt
+faiss-cpu>=1.9.0
+sentence-transformers>=2.2.0
+qdrant-client>=1.7.0
+numpy>=1.24.0
+torch>=2.0.0
+transformers>=4.30.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+tqdm>=4.65.0
+python-dotenv>=1.0.0

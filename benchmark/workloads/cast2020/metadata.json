@@ -1,0 +1,12 @@
+{
+  "name": "trec-cast-2020",
+  "description": "TREC CAsT 2020 \u2014 Conversational passage retrieval (MARCO passages only, 24 CAR-only queries excluded)",
+  "corpus_count": 3037,
+  "query_count": 192,
+  "labeled_query_count": 184,
+  "session_count": 25,
+  "avg_turns_per_session": 7.68,
+  "embedding_model": "intfloat/e5-base-v2",
+  "embedding_dim": 768,
+  "note": "184/208 labeled queries have ground truth in MARCO corpus. 24 queries with only CAR relevant docs are excluded."
+}

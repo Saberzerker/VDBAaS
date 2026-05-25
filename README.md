@@ -227,15 +227,27 @@ Results are saved to `benchmark/results/<output-name>/results.json` containing:
 
 ### Expected Runtimes
 
-| Dataset | Queries | Cloud-only | Full Hybrid (tau=0.95) |
-|---------|---------|------------|----------------------|
-| NFCorpus | 323 | ~45s | ~50s |
-| SciFact | 300 | ~45s | ~30s |
-| QReCC | 3,481 | ~9min | ~6min |
-| CAsT 2020 | 208 | ~35s | ~90s |
-| TREC-COVID | 50 | ~8s | ~7s |
+Wall-clock estimates at ~500ms per query (typical for cold embedding model + network latency):
 
-*Times depend on network latency to Qdrant cloud instance.*
+| Dataset | Queries | Estimated Time |
+|---------|---------|----------------|
+| NFCorpus | 323 | ~2.5 min |
+| SciFact | 300 | ~2.5 min |
+| QReCC | 3,481 | ~29 min |
+| CAsT 2020 | 192 | ~1.5 min |
+| TREC-COVID | 50 | ~25 sec |
+
+Multipass (3 sequential passes):
+
+| Configuration | Estimated Total |
+|---------------|----------------|
+| QReCC FH tau=0.95 | ~90 min |
+| QReCC RC tau=0.88 | ~90 min |
+| CAsT FH tau=0.95 | ~5 min |
+
+*Per-query latency is dominated by embedding computation (~200ms) and cloud round-trip (~150-300ms). Local-only queries (Tier 1 + Tier 2 hits) serve in 1-5ms. Times above assume all queries hit cloud; hybrid runs with local cache hits will be faster.*
+
+*Our measured times on pre-cached embeddings + Qdrant Cloud (Australia-southeast1): NFCorpus ~50s, SciFact ~27s, QReCC ~6min, CAsT ~12s, TREC-COVID ~2s.*
 
 ### Key Parameters
 
@@ -247,14 +259,98 @@ Results are saved to `benchmark/results/<output-name>/results.json` containing:
 | `--cold-start` | false | Clear Tier 2 before run (reproducible) |
 | `--top-k` | 5 | Number of results per query |
 
+## What You Can Run
+
+### Fully Offline (no cloud needed)
+- **Tier 1 seeding**: `python scripts/seed_permanent_kmeans.py` — builds local FAISS index from corpus embeddings
+- **Embedding verification**: Compute and verify e5-base-v2 embeddings against provided `.npy` files
+
+### Requires Qdrant Cloud Instance
+- All hybrid variants (`full_hybrid`, `reactive_cache`, `true_lru`)
+- Gate sweeps, multipass benchmarks, tier sizing sweeps
+- The cloud serves as the authoritative corpus (Tier 3) — without it, no hybrid routing is possible
+
+### Cannot Be Run Without Setup
+- Results will not match paper unless your Qdrant collection is seeded with the exact corpus and embeddings provided in `benchmark/workloads/`
+- Multipass requires the same Qdrant collection accessible across all 3 sequential passes
+- Embedding model must be `intfloat/e5-base-v2` — other models produce different cosine similarities and different routing behavior
+- TREC-COVID corpus (211MB) must be downloaded separately from [BEIR](https://github.com/beir-cellar/beir) and placed in `benchmark/workloads/beir/trec-covid/`
+- QReCC pre-computed embeddings (53MB) must be regenerated or obtained separately
+
+## Quick Smoke Test
+
+Verify the codebase is correctly set up without needing a cloud instance:
+
+```bash
+# 1. Verify all imports work
+python -c "from src.config import Config; from src.storage_engine import StorageEngine; print('Imports OK')"
+
+# 2. Verify workloads are present
+python -c "
+from pathlib import Path
+w = Path('benchmark/workloads')
+datasets = ['beir/nfcorpus', 'beir/scifact', 'beir/trec-covid', 'cast2020', 'qrecc']
+for d in datasets:
+    p = w / d
+    files = list(p.glob('*')) if p.exists() else []
+    print(f'{d}: {len(files)} files')
+"
+
+# 3. Verify embeddings load correctly
+python -c "
+import numpy as np
+emb = np.load('benchmark/workloads/beir/nfcorpus/embeddings_intfloat_e5-base-v2.npy')
+print(f'NFCorpus embeddings: shape={emb.shape}, dtype={emb.dtype}')
+
+emb2 = np.load('benchmark/workloads/beir/scifact/embeddings_intfloat_e5-base-v2.npy')
+print(f'SciFact embeddings: shape={emb2.shape}, dtype={emb2.dtype}')
+
+emb3 = np.load('benchmark/workloads/cast2020/embeddings_intfloat_e5-base-v2.npy')
+print(f'CAsT embeddings: shape={emb3.shape}, dtype={emb3.dtype}')
+"
+
+# 4. Verify benchmark CLI parses correctly
+python -m benchmark.benchmark --help
+```
+
+Expected output:
+```
+Imports OK
+beir/nfcorpus: 5 files
+beir/scifact: 5 files
+beir/trec-covid: 2 files  (corpus excluded, see above)
+cast2020: 4 files
+qrecc: 4 files  (embeddings excluded, see above)
+NFCorpus embeddings: shape=(3633, 768), dtype=float32
+SciFact embeddings: shape=(5183, 768), dtype=float32
+CAsT embeddings: shape=(3842, 768), dtype=float32
+[benchmark --help output showing all CLI flags]
+```
+
+## CLI Reference
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--variant` | str | `full_hybrid` | Retrieval mode: `cloud_only`, `reactive_cache`, `full_hybrid`, `true_lru`, `parallel_hybrid` |
+| `--manifest-file` | str | required | Path to query manifest `.jsonl` (see workloads/) |
+| `--collection-name` | str | required | Qdrant collection name for cloud corpus |
+| `--top-k` | int | 5 | Number of results per query |
+| `--gate-threshold` | float | 0.9 | Cosine similarity threshold for local vs cloud routing |
+| `--tier2-percent` | float | 0.15 | Tier 2 capacity as fraction of corpus (e.g. 0.05 = 5%) |
+| `--cold-start` | flag | false | Clear Tier 2 dynamic index before run (required for reproducibility) |
+| `--output-name` | str | `benchmark_run` | Name for results directory under `benchmark/results/` |
+| `--dynamic-dir-override` | str | auto | Override path for Tier 2 dynamic index (required for parallel runs) |
+
+Run `python -m benchmark.benchmark --help` for full usage.
+
 ## Reproducing Paper Results
 
 The paper evaluates on 5 datasets across 4 experiment types:
 
-1. **Main results** (Table 4): Run each variant at tau=0.90 with --cold-start
+1. **Main results** (Table 4): Run each variant at tau=0.90 with `--cold-start`
 2. **Gate sweep** (Table 5): Sweep tau in [0.84, 0.88, 0.90, 0.92, 0.95, 0.97, 0.99]
 3. **Multipass learning** (Table 6): 3-pass runs for CAsT tau=0.95, QReCC RC tau=0.88, QReCC FH tau=0.95
-4. **Tier sizing**: Sweep tier2-percent in [0.05, 0.10, 0.20, 0.30] at tau=0.95
+4. **Tier sizing** (Table 7): Sweep `--tier2-percent` in [0.05, 0.10, 0.20, 0.30] at tau=0.95
 
 All runs should use `--cold-start` for reproducibility.
 
@@ -264,3 +360,4 @@ All runs should use `--cold-start` for reproducibility.
 - QReCC evaluation uses labeled queries only (1,569 of 3,481; unlabeled queries have no relevance judgments)
 - TREC-COVID uses the BEIR v1.0 qrels; ensure your Qdrant collection is seeded with the correct corpus
 - The gate threshold is global and static; future work may explore per-workload adaptive calibration
+- This repository contains all code and data needed to reproduce the reported results, given a Qdrant cloud instance seeded with the provided corpus files

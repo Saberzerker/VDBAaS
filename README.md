@@ -329,19 +329,62 @@ CAsT embeddings: shape=(3842, 768), dtype=float32
 
 ## CLI Reference
 
+Run `python -m benchmark.benchmark --help` for the authoritative listing. Output as of this release:
+
+```
+usage: benchmark.py [-h] [--mode {quick,full}] [--queries-file QUERIES_FILE]
+                    [--manifest-file MANIFEST_FILE] [--top-k TOP_K]
+                    [--variant {full_hybrid,parallel_hybrid,reactive_cache,no_prefetch,local_only,cloud_only,t1_plus_cloud,local_full,random_3pct,true_lru,freq_cache}]
+                    [--collection-name COLLECTION_NAME] [--gate-threshold GATE_THRESHOLD]
+                    [--output-name OUTPUT_NAME] [--cold-start]
+                    [--dynamic-dir-override DYNAMIC_DIR_OVERRIDE] [--tier2-percent TIER2_PERCENT]
+
+Hybrid VDB Benchmark
+
+options:
+  -h, --help            show this help message and exit
+  --mode {quick,full}   Test mode: quick (100) or full (1000 queries)
+  --queries-file QUERIES_FILE
+                        Path to custom queries file (for quick mode)
+  --manifest-file MANIFEST_FILE
+                        Path to a JSONL manifest with payload and expected_ids
+  --top-k TOP_K         Top-k results to request and evaluate
+  --variant {full_hybrid,parallel_hybrid,reactive_cache,no_prefetch,local_only,cloud_only,t1_plus_cloud,local_full,random_3pct,true_lru,freq_cache}
+                        Benchmark variant to run
+  --collection-name COLLECTION_NAME
+                        Optional Qdrant collection override. For workload manifests,
+                        defaults to a derived workload-specific collection name.
+  --gate-threshold GATE_THRESHOLD
+                        Override GATE_INITIAL_THRESHOLD for sweep runs. Only affects
+                        gate-dependent variants.
+  --output-name OUTPUT_NAME
+                        Override output directory name for sweep runs.
+  --cold-start          Delete dynamic/ (Tier 2) directory before init. Ensures empty
+                        Tier 2 so prefetch/reactive contribution is measured, not
+                        pre-seeded cache.
+  --dynamic-dir-override DYNAMIC_DIR_OVERRIDE
+                        Override dynamic/ (Tier 2) directory path. REQUIRED when
+                        running multiple variants in parallel — each variant must
+                        have its own isolated dynamic/ dir to prevent FAISS index
+                        corruption from concurrent writes.
+  --tier2-percent TIER2_PERCENT
+                        Override Tier 2 size as fraction of corpus (e.g. 0.05 for
+                        5%, 0.30 for 30%). Default is config.TIER2_PERCENT (0.15).
+```
+
+Quick reference:
+
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--variant` | str | `full_hybrid` | Retrieval mode: `cloud_only`, `reactive_cache`, `full_hybrid`, `true_lru`, `parallel_hybrid` |
+| `--variant` | str | `full_hybrid` | Retrieval mode (see list above) |
 | `--manifest-file` | str | required | Path to query manifest `.jsonl` (see workloads/) |
-| `--collection-name` | str | required | Qdrant collection name for cloud corpus |
+| `--collection-name` | str | auto | Qdrant collection name for cloud corpus |
 | `--top-k` | int | 5 | Number of results per query |
 | `--gate-threshold` | float | 0.9 | Cosine similarity threshold for local vs cloud routing |
 | `--tier2-percent` | float | 0.15 | Tier 2 capacity as fraction of corpus (e.g. 0.05 = 5%) |
 | `--cold-start` | flag | false | Clear Tier 2 dynamic index before run (required for reproducibility) |
 | `--output-name` | str | `benchmark_run` | Name for results directory under `benchmark/results/` |
 | `--dynamic-dir-override` | str | auto | Override path for Tier 2 dynamic index (required for parallel runs) |
-
-Run `python -m benchmark.benchmark --help` for full usage.
 
 ## Reproducing Paper Results
 
